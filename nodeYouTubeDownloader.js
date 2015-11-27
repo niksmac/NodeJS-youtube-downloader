@@ -66,7 +66,7 @@ var nodeYouTubeDownloader = {
 		this.videoInfo = { videoID: '', title: '', urls: [], currentDownloadIndex: -1 };
 
 		process.stdout.write("paste youtube url here:\n> ");
-		
+
 		var self = this;
 		process.stdin.once('data', function(chunk){
 			var youtube_url = chunk.toString().trim();
@@ -90,10 +90,10 @@ var nodeYouTubeDownloader = {
 		if(pattern1.test(youtube_url)) {
 			if(youtube_url.indexOf('/v/') == -1) {
 				var ua = url.parse(youtube_url, true);
-				if(ua.query.v != null) {
+				if(ua.query.v !== null) {
 					vid = ua.query.v;
 					valid = true;
-				} else if(ua.query.video_id != null) {
+				} else if(ua.query.video_id !== null) {
 					vid = ua.query.video_id;
 					valid = true;
 				}
@@ -101,7 +101,7 @@ var nodeYouTubeDownloader = {
 				var url_parts = url.parse(youtube_url).path.split('/v/');
 				vid = url_parts[1];
 				valid = true;
-			} 
+			}
 		} else if(pattern2.test(youtube_url)) {
 			vid = url.parse(youtube_url).pathname.substr(1);
 			valid = true;
@@ -109,7 +109,7 @@ var nodeYouTubeDownloader = {
 
 		return {valid: valid, vid: vid};
 	},
-	
+
 	wrongUrl: function(){
 		process.stdout.write("sorry, wrong url... ");
 		this.askRestart();
@@ -118,7 +118,7 @@ var nodeYouTubeDownloader = {
 	getVideoInfo: function(vid, callback){
 		this.videoInfo.videoID = vid;
 		var video_info_url = 'http://www.youtube.com/get_video_info?eurl=http://test.localhost.local/&sts=1586&video_id=' + vid;
-		
+
 		var options = {
 			host: url.parse(video_info_url).host,
 			port: 80,
@@ -140,7 +140,7 @@ var nodeYouTubeDownloader = {
 	getVideoInfo_alternative: function(vid, callback){
 		this.videoInfo.videoID = vid;
 		var video_info_url = 'http://www.youtube.com/watch?v=' + vid;
-		
+
 		var options = {
 			host: url.parse(video_info_url).host,
 			port: 80,
@@ -156,7 +156,7 @@ var nodeYouTubeDownloader = {
 			}).on('end', function() {
 				// console.log(video_info_url);
 				// console.log(options);
-				// console.log(infos);
+			  console.log(infos);
 				self[callback](infos);
 			});
 		});
@@ -175,7 +175,7 @@ var nodeYouTubeDownloader = {
 			fmt_map = queries.adaptive_fmts.split(',');
 		}catch(err){}
 
-		if(fmt_map == ''){
+		if(fmt_map === ''){
 			this.getVideoInfo_alternative(this.videoInfo.videoID, 'parseVideoInfo_alternative');
 		}else{
 			process.stdout.write("\n" + this.videoInfo.title + "\n");
@@ -184,7 +184,7 @@ var nodeYouTubeDownloader = {
 			for(var i in fmt_map){
 				fmt_map[i] = querystring.parse(fmt_map[i]);
 
-				if(this.fmt_str[fmt_map[i].itag] == undefined){
+				if(this.fmt_str[fmt_map[i].itag] === undefined){
 					this.fmt_str[fmt_map[i].itag] = { desc: '(' + fmt_map[i].type + ')', ext:'' };
 				}
 
@@ -193,7 +193,7 @@ var nodeYouTubeDownloader = {
 					process.stdout.write('[' + dlCount++ + '] ' + this.fmt_str[fmt_map[i].itag].desc + "\n");
 				}
 			}
-			
+
 			this.askDownload();
 		}
 	},
@@ -225,7 +225,7 @@ var nodeYouTubeDownloader = {
 			fmt_map = url_encoded_fmt_stream_map.split(',');
 		}catch(err){}
 
-		if(fmt_map == ''){
+		if(fmt_map === ''){
 			process.stdout.write("oh oh... something's wrong... ");
 			this.askRestart();
 		}else{
@@ -235,7 +235,7 @@ var nodeYouTubeDownloader = {
 			for(var i in fmt_map){
 				fmt_map[i] = querystring.parse(fmt_map[i].replace(/\\u0026/g, '&'));
 
-				if(this.fmt_str[fmt_map[i].itag] == undefined){
+				if(this.fmt_str[fmt_map[i].itag] === undefined){
 					this.fmt_str[fmt_map[i].itag] = { desc: '(' + fmt_map[i].type + ')', ext:'' };
 				}
 
@@ -247,12 +247,12 @@ var nodeYouTubeDownloader = {
 
 			this.askDownload();
 		}
-	},	
+	},
 
 	getSignature: function(fmt){
-		if(fmt.sig != null){
+		if(fmt.sig !== null){
 			return fmt.sig;
-		}else if(fmt.s != null){
+		}else if(fmt.s !== null){
 			return this.alternativeSignatureHandler(fmt.s);
 		}
 
@@ -302,8 +302,8 @@ var nodeYouTubeDownloader = {
 				self.downloadFileRealUrl(res.headers.location);
 			}else{
 				process.stdout.write("file size: " + (Math.round(parseInt(res.headers['content-length']) * 100.0 / (1024 * 1024)) / 100) + "MB.\n");
-				
-				var file_name = self.videoInfo.videoID + '.' + self.fmt_str[self.videoInfo.urls[self.videoInfo.currentDownloadIndex].itag].ext;
+        //console.log(self.videoInfo);
+				var file_name = self.videoInfo.title + '.' + self.fmt_str[self.videoInfo.urls[self.videoInfo.currentDownloadIndex].itag].ext;
 				var file = fs.createWriteStream(file_name);
 
 				process.stdout.write("video is downloading and save as " + file_name + ", please wait...\n");
@@ -333,7 +333,7 @@ var nodeYouTubeDownloader = {
 
 			if(ans <= -1 || ans > self.videoInfo.urls.length){
 				self.askDownload();
-			} else if(ans == 0){
+			} else if(ans === 0){
 				self.askRestart();
 			} else {
 				self.downloadFile(ans - 1);
@@ -346,7 +346,7 @@ var nodeYouTubeDownloader = {
 		process.stdout.write("wanna start over again? (Y/n)\n> ");
 		process.stdin.once('data', function(chunk){
 			var ans = chunk.toString().trim().toLowerCase().substr(0, 1);
-			if(ans == 'y' || ans == ''){
+			if(ans === 'y' || ans === ''){
 				self.start();
 			} else if (ans == 'n'){
 				process.stdout.write("enjoy your video, bye bye.\n");
