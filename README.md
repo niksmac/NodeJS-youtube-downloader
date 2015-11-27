@@ -1,12 +1,12 @@
-#nodeYouTubeDownloader#
+# nodejs YouTube Downloader
 
 A simple command line tool for downloading YouTube video using node.js
 
 ---
 
-##Usage
+## Usage
 
-just simply type:
+just type:
 
 	node ./nodeYouTubeDownloader.js
 
@@ -31,4 +31,4 @@ once you paste a youtube url and press enter, you will get a download list like 
 	which one do you want to download? or enter 0 to exit.
 	> _
 
-select one and start download, and that's it.
+Select one and start download, and that's it.

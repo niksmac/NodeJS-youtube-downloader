@@ -1,13 +1,4 @@
-/*
- * nodeYouTubeDownloader v0.2
- * https://github.com/kejjang/node-youtube-downloader
- *
- * Copyright (C) 2013 Kej Jang <kejjang@gmail.com>
- * Released under the WTFPL
- * http://www.wtfpl.net/
- *
- * Date: 2013-09-26
- */
+
 var fs = require('fs'),
     url = require('url'),
     http = require('http'),
@@ -154,9 +145,6 @@ var nodeYouTubeDownloader = {
 			res.on('data', function(data) {
 				infos += data.toString();
 			}).on('end', function() {
-				// console.log(video_info_url);
-				// console.log(options);
-			  console.log(infos);
 				self[callback](infos);
 			});
 		});
@@ -217,7 +205,6 @@ var nodeYouTubeDownloader = {
 			url_encoded_fmt_stream_map = result_fmt_map[1];
 		}catch(err){}
 
-		// console.log(url_encoded_fmt_stream_map);
 
 		var fmt_map = '';
 
@@ -302,7 +289,7 @@ var nodeYouTubeDownloader = {
 				self.downloadFileRealUrl(res.headers.location);
 			}else{
 				process.stdout.write("file size: " + (Math.round(parseInt(res.headers['content-length']) * 100.0 / (1024 * 1024)) / 100) + "MB.\n");
-        //console.log(self.videoInfo);
+
 				var file_name = self.videoInfo.title + '.' + self.fmt_str[self.videoInfo.urls[self.videoInfo.currentDownloadIndex].itag].ext;
 				var file = fs.createWriteStream(file_name);
 
